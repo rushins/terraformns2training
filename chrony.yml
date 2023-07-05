@@ -1,0 +1,24 @@
+- hosts: ansibletower 
+  become: yes
+  remote_user: ec2-user
+  become_user: root
+  tasks:
+  - name: make sure chronyd is installed
+    yum:
+     name: chrony
+     state: latest
+     update_cache: yes
+
+  - name: deploy chrony.conf template
+    template:
+     src: /Users/i811144/rushi/multicloud/aws/learn-terraform-aws-instance/ansibletower/jenkins/chrony.conf
+     dest: /etc/chrony.conf
+     owner: root
+     group: root
+     mode: 0644
+     backup: yes
+
+  - name: Restart chronyd
+    service:
+      name: chronyd
+      state: restarted
