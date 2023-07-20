@@ -13,13 +13,38 @@ provider "aws" {
   region = "us-west-2"
 }
 
-resource "aws_instance" "ansible_tower" {
-  ami           = "ami-02d40d11bb3aaf3e5"
-  instance_type = "t2.micro"
-  key_name      = "rushiawstrail"
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
 
   tags = {
-    Name = "ansibletower"
+    Name = "main"
+  }
+}
+
+resource "aws_subnet" "public_subnet" {
+  vpc_id      = aws_vpc.main.id
+  cidr_block  = "10.0.1.0/24"
+
+  tags = {
+    Name = "Public Subnet"
+  }
+}
+
+resource "aws_subnet" "private_subnet" {
+  vpc_id      = aws_vpc.main.id
+  cidr_block  = "10.0.2.0/24"
+  availability-zone = ap-south-1
+
+  tags = {
+    Name = "Private Subnet"
+  }
+}
+
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "igw"
   }
 }
 
